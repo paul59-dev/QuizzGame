@@ -32,23 +32,34 @@ func main() {
 		if len(line) > 1 {
 			questions[i] = line[0]
 		}
-		fmt.Printf("Value: %+v\n", questions)
+	}
+
+	responses := make([]string, len(lines))
+	for i, line := range lines {
+		if len(line) > 1 {
+			responses[i] = line[1]
+		}
 	}
 
 	// Given response with differente question of the csv file
 	for i := 0; i < len(questions); i++ {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
 		fmt.Print("Response: ")
+
 		// Ueser input
 		sc := bufio.NewScanner(os.Stdin)
 		if sc.Scan() {
 			userInput = sc.Text()
 			fmt.Printf("Value of input: %s\n", userInput)
+			if userInput == responses[i] {
+				fmt.Println("Yes, continious !")
+			} else {
+				fmt.Println("Sorry, restarting !")
+				break
+			}
 		} else {
 			fmt.Println("Error for the read user input:", sc.Err())
 			return
 		}
 	}
-
-	fmt.Println("Extract questions :", questions)
 }
