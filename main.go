@@ -22,7 +22,13 @@ func removeAccents(input string) string {
 
 func main() {
 
-	var userInput string
+	var (
+		userInput string // => ""
+		score     int    // => 0
+	)
+
+	// Pointer
+	scorePtr := &score
 
 	file, err := os.Open("problem.csv")
 	if err != nil {
@@ -55,6 +61,7 @@ func main() {
 	}
 
 	// Given response with differente question of the csv file
+	// Principal loop
 	for i := 0; i < len(questions); i++ {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
 		fmt.Print("Response: ")
@@ -68,8 +75,10 @@ func main() {
 			fmt.Printf("Value of response: %s\n", responses[i])
 			if userInput == responses[i] {
 				fmt.Println("Yes, continious !")
+				*scorePtr++
 			} else {
 				fmt.Println("Sorry, restarting !")
+				fmt.Printf("Tour score is: %#v", *scorePtr)
 				break
 			}
 		} else {
