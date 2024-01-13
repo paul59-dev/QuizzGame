@@ -36,13 +36,13 @@ func main() {
 	// Pointer
 	scorePtr := &score
 
-	file, err := os.Open("problem.csv")
+	readCSV, err := os.Open("problem.csv")
 	if err != nil {
 		fmt.Println("imposible open the csv file: ", err)
 	}
-	defer file.Close()
+	defer readCSV.Close()
 
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(readCSV)
 
 	// Read all data in the csv file
 	lines, err := reader.ReadAll()
@@ -109,4 +109,24 @@ func main() {
 			return
 		}
 	}
+
+	user.Score = *scorePtr
+
+	writerCSV, err := os.OpenFile("user.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println("Impossible to open user.csv: ", err)
+		return
+	}
+	defer writerCSV.Close()
+
+	writer := csv.NewWriter(writerCSV)
+	defer writer.Flush()
+
+	err = writer.Write([]string{user.Pseudo, fmt.Sprint(user.Score)})
+	if err != nil {
+		fmt.Println("Error writting to csv: ", err)
+		return
+	}
+
+	fmt.Println("\nDonnées de l'utilisateur enregistrées dans user.csv.")
 }
