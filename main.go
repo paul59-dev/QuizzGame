@@ -12,6 +12,11 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
+type User struct {
+	Pseudo string
+	Score  int
+}
+
 func removeAccents(input string) string {
 	t := transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool {
 		return unicode.Is(unicode.Mn, r) // Retirer les marques diacritiques
@@ -25,6 +30,7 @@ func main() {
 	var (
 		userInput string // => ""
 		score     int    // => 0
+		user      User
 	)
 
 	// Pointer
@@ -53,11 +59,29 @@ func main() {
 		}
 	}
 
+	// Read second colomn in the csv file
 	responses := make([]string, len(lines))
 	for i, line := range lines {
 		if len(line) > 1 {
 			responses[i] = line[1]
 		}
+	}
+
+	sc := bufio.NewScanner(os.Stdin)
+
+	// Create User
+	fmt.Printf("Votre pseudo (<= 10 characteres): ")
+	fmt.Print("=> ")
+	if sc.Scan() {
+		user.Pseudo = sc.Text()
+		if len(user.Pseudo) > 10 {
+			fmt.Printf("Pseudo trop long, veuillez entrer un pseudo de 10 caractères ou moins.\n")
+		} else {
+			fmt.Printf("Pseudo: %s\n", user.Pseudo)
+		}
+	} else {
+		fmt.Println("Error for the read user input:", sc.Err())
+		return
 	}
 
 	// Given response with differente question of the csv file
@@ -66,8 +90,7 @@ func main() {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
 		fmt.Print("Response: ")
 
-		// Ueser input
-		sc := bufio.NewScanner(os.Stdin)
+		// User input response
 		if sc.Scan() {
 			userInput = removeAccents(strings.ToLower(sc.Text()))
 			responses[i] = removeAccents(strings.ToLower(responses[i]))
