@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -49,9 +50,9 @@ func main() {
 		// Ueser input
 		sc := bufio.NewScanner(os.Stdin)
 		if sc.Scan() {
-			userInput = sc.Text()
+			userInput = strings.ToLower(sc.Text())
 			fmt.Printf("Value of input: %s\n", userInput)
-			if userInput == responses[i] {
+			if userInput == strings.ToLower(responses[i]) {
 				fmt.Println("Yes, continious !")
 			} else {
 				fmt.Println("Sorry, restarting !")
