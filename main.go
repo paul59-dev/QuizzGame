@@ -6,7 +6,19 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
+
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
+
+func removeAccents(input string) string {
+	t := transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool {
+		return unicode.Is(unicode.Mn, r) // Retirer les marques diacritiques
+	}))
+	result, _, _ := transform.String(t, input)
+	return result
+}
 
 func main() {
 
@@ -14,7 +26,7 @@ func main() {
 
 	file, err := os.Open("problem.csv")
 	if err != nil {
-		fmt.Errorf("imposible open the csv file", err)
+		fmt.Println("imposible open the csv file: ", err)
 	}
 	defer file.Close()
 
@@ -23,7 +35,7 @@ func main() {
 	// Read all data in the csv file
 	lines, err := reader.ReadAll()
 	if err != nil {
-		fmt.Println("Error of the read csv file", err)
+		fmt.Println("Error of the read csv file: ", err)
 		return
 	}
 
@@ -50,9 +62,11 @@ func main() {
 		// Ueser input
 		sc := bufio.NewScanner(os.Stdin)
 		if sc.Scan() {
-			userInput = strings.ToLower(sc.Text())
+			userInput = removeAccents(strings.ToLower(sc.Text()))
+			responses[i] = removeAccents(strings.ToLower(responses[i]))
 			fmt.Printf("Value of input: %s\n", userInput)
-			if userInput == strings.ToLower(responses[i]) {
+			fmt.Printf("Value of response: %s\n", responses[i])
+			if userInput == responses[i] {
 				fmt.Println("Yes, continious !")
 			} else {
 				fmt.Println("Sorry, restarting !")
