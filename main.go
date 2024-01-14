@@ -17,6 +17,7 @@ type User struct {
 	Score  int
 }
 
+// Function allow delete the accent in the word
 func removeAccents(input string) string {
 	t := transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool {
 		return unicode.Is(unicode.Mn, r) // Retirer les marques diacritiques
@@ -36,6 +37,7 @@ func main() {
 	// Pointer
 	scorePtr := &score
 
+	// Open problem.csv in read mode
 	readCSV, err := os.Open("problem.csv")
 	if err != nil {
 		fmt.Println("imposible open the csv file: ", err)
@@ -78,6 +80,7 @@ func main() {
 			fmt.Printf("Pseudo trop long, veuillez entrer un pseudo de 10 caractères ou moins.\n")
 		} else {
 			fmt.Printf("Pseudo: %s\n", user.Pseudo)
+			fmt.Println()
 		}
 	} else {
 		fmt.Println("Error for the read user input:", sc.Err())
@@ -88,20 +91,22 @@ func main() {
 	// Principal loop
 	for i := 0; i < len(questions); i++ {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
-		fmt.Print("Response: ")
+		fmt.Print("Réponce: ")
 
 		// User input response
 		if sc.Scan() {
+			// Delete accent, convert to lower case
 			userInput = removeAccents(strings.ToLower(sc.Text()))
 			responses[i] = removeAccents(strings.ToLower(responses[i]))
-			fmt.Printf("Value of input: %s\n", userInput)
-			fmt.Printf("Value of response: %s\n", responses[i])
 			if userInput == responses[i] {
-				fmt.Println("Yes, continious !")
-				*scorePtr++
+				fmt.Println("Bravo, continuer !")
+				*scorePtr++ // Increment score for memory adress of the score variable
+				fmt.Println()
 			} else {
-				fmt.Println("Sorry, restarting !")
-				fmt.Printf("Tour score is: %#v", *scorePtr)
+				fmt.Println("Désolé, réessayer !")
+				fmt.Println()
+				fmt.Printf("Votre score: %#v", *scorePtr)
+				fmt.Println()
 				break
 			}
 		} else {
@@ -110,8 +115,9 @@ func main() {
 		}
 	}
 
-	user.Score = *scorePtr
+	user.Score = *scorePtr // Inject score pointer to attribut Score in the User struct
 
+	// Open or create user.csv file
 	writerCSV, err := os.OpenFile("user.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("Impossible to open user.csv: ", err)
@@ -119,9 +125,11 @@ func main() {
 	}
 	defer writerCSV.Close()
 
+	// New writer in user.csv
 	writer := csv.NewWriter(writerCSV)
 	defer writer.Flush()
 
+	// Inject the data to user.csv
 	err = writer.Write([]string{user.Pseudo, fmt.Sprint(user.Score)})
 	if err != nil {
 		fmt.Println("Error writting to csv: ", err)
