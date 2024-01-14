@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"paul/quizzGame/packages/quizzgame"
+	"paul/quizzGame/packages/scoreboard"
 	"strconv"
 )
 
@@ -39,6 +40,8 @@ func Dashboard() {
 			switch number {
 			case 1:
 				quizzgame.QuizzGame()
+			case 2:
+				scoreboard.Scoreboard()
 			default:
 				fmt.Println("Nombre invalide !")
 			}
