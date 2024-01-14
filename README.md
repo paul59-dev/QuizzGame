@@ -26,6 +26,9 @@ Recover the `quizzGame.exe` in the repo, for the time being, they are .exe for W
 - Clone the repository with command line: `git clone https://github.com/paul59-dev/QuizzGame.git`
 - You can execute with .exe or you can execute with command line in a terminal in the folder: `go run .`
 
+## Future updates
+
+
 --- 
 
 <p style="text-align: center">©️Paul Allebée - 2024</p>
