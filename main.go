@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -12,9 +13,54 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
+var sc *bufio.Scanner
+
 type User struct {
 	Pseudo string
 	Score  int
+}
+
+func initScanner() {
+	// Initialisation du scanner avec l'entrée standard (os.Stdin)
+	sc = bufio.NewScanner(os.Stdin)
+}
+
+func dashboard() {
+	initScanner()
+
+	var dashboard = []string{
+		"QuizzGame",
+		"Voir les scores",
+	}
+
+	fmt.Println("Menu principal !")
+	for index, value := range dashboard {
+		fmt.Printf("%d - %s\n", index+1, value)
+	}
+
+	for {
+		fmt.Print("Enter number: ")
+		if sc.Scan() {
+			userInput := sc.Text()
+			userNumber, err := strconv.Atoi(userInput)
+			if err != nil {
+				fmt.Println("Error to convert variable to interger: ", err)
+				return
+			}
+
+			if userNumber < 0 || userNumber > len(dashboard) {
+				fmt.Printf("Nombre invalide, veuillez entrer un nombre entre 0 et %d", len(dashboard))
+				continue
+			}
+		} else {
+			fmt.Println("Error for the read user input:", sc.Err())
+			return
+		}
+
+		break
+	}
+
+	fmt.Println()
 }
 
 // Function allow delete the accent in the word
@@ -27,6 +73,7 @@ func removeAccents(input string) string {
 }
 
 func main() {
+	initScanner()
 
 	var (
 		userInput string // => ""
@@ -69,8 +116,6 @@ func main() {
 		}
 	}
 
-	sc := bufio.NewScanner(os.Stdin)
-
 	// Create User
 	fmt.Printf("Votre pseudo (<= 10 characteres): ")
 	fmt.Print("=> ")
@@ -87,11 +132,13 @@ func main() {
 		return
 	}
 
+	dashboard()
+
 	// Given response with differente question of the csv file
 	// Principal loop
 	for i := 0; i < len(questions); i++ {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
-		fmt.Print("Réponce: ")
+		fmt.Print("Réponse: ")
 
 		// User input response
 		if sc.Scan() {
