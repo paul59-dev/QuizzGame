@@ -4,6 +4,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 func Scoreboard() {
@@ -11,9 +13,9 @@ func Scoreboard() {
 	readCSV, err := os.Open("user.csv")
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Println("Aucune donnée pour le moment")
+			color.Yellow("Aucune donnée pour le moment")
 		} else {
-			fmt.Println("imposible open the csv file: ", err)
+			color.Red("imposible open the csv file: ", err)
 		}
 	}
 	defer readCSV.Close()
@@ -23,7 +25,7 @@ func Scoreboard() {
 	// Read all data in the csv file
 	lines, err := reader.ReadAll()
 	if err != nil {
-		fmt.Println("Error of the read csv file: ", err)
+		color.Red("Error of the read csv file: ", err)
 		return
 	}
 
