@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"unicode/utf8"
 )
 
 type User struct {
@@ -16,19 +17,25 @@ func CreateUser() User {
 
 	var user User
 
-	fmt.Printf("Votre pseudo (<= 10 caractères): ")
-	fmt.Print("=> ")
-	if sc.Scan() {
-		user.Pseudo = sc.Text()
-		if len(user.Pseudo) > 10 {
-			fmt.Printf("Pseudo trop long, veuillez entrer un pseudo de 10 caractères ou moins.\n")
+	for {
+		fmt.Printf("Votre pseudo (<= 8 caractères): ")
+		fmt.Print("=> ")
+		if sc.Scan() {
+			user.Pseudo = sc.Text()
+			lengthPseudo := utf8.RuneCountInString(user.Pseudo)
+			if lengthPseudo > 8 {
+				fmt.Printf("Pseudo trop long, veuillez entrer un pseudo de 8 caractères ou moins.\n")
+				continue
+			} else {
+				fmt.Printf("Pseudo: %s\n", user.Pseudo)
+				fmt.Println()
+			}
 		} else {
-			fmt.Printf("Pseudo: %s\n", user.Pseudo)
-			fmt.Println()
+			fmt.Println("Error for the read user input:", sc.Err())
+			return User{}
 		}
-	} else {
-		fmt.Println("Error for the read user input:", sc.Err())
-		return User{}
+
+		break
 	}
 
 	return user
