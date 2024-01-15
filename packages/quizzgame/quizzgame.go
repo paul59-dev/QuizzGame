@@ -5,9 +5,11 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"paul/quizzGame/packages/colors"
 	"strings"
 	"unicode"
 
+	"github.com/fatih/color"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
@@ -29,7 +31,7 @@ func QuizzGame() {
 	// Open problem.csv in read mode
 	readCSV, err := os.Open("problem.csv")
 	if err != nil {
-		fmt.Println("imposible open the csv file: ", err)
+		color.Red("imposible open the csv file: ", err)
 	}
 	defer readCSV.Close()
 
@@ -38,7 +40,7 @@ func QuizzGame() {
 	// Read all data in the csv file
 	lines, err := reader.ReadAll()
 	if err != nil {
-		fmt.Println("Error of the read csv file: ", err)
+		color.Red("Error of the read csv file: ", err)
 		return
 	}
 
@@ -62,7 +64,7 @@ func QuizzGame() {
 	// Principal loop
 	for i := 0; i < len(questions); i++ {
 		fmt.Printf("Question %d: %s:\n", i+1, questions[i])
-		fmt.Print("Réponse: ")
+		colors.Color("Réponse: ", "cyan")
 
 		// User input response
 		if sc.Scan() {
@@ -70,18 +72,18 @@ func QuizzGame() {
 			userInput = removeAccents(strings.ToLower(sc.Text()))
 			responses[i] = removeAccents(strings.ToLower(responses[i]))
 			if userInput == responses[i] {
-				fmt.Println("Bravo, continuer !")
+				colors.Color("Bravo, continuer !", "green")
 				*scorePtr++ // Increment score for memory adress of the score variable
 				fmt.Println()
 			} else {
-				fmt.Println("Désolé, réessayer !")
+				colors.Color("Désolé, réessayer !", "yellow")
 				fmt.Println()
-				fmt.Printf("Votre score: %#v", *scorePtr)
+				colors.Color("Votre score: %#v", "cyan", *scorePtr)
 				fmt.Println()
 				break
 			}
 		} else {
-			fmt.Println("Error for the read user input:", sc.Err())
+			color.Red("Error for the read user input:", sc.Err())
 			return
 		}
 	}
@@ -91,7 +93,7 @@ func QuizzGame() {
 	// Open or create user.csv file
 	writerCSV, err := os.OpenFile("user.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		fmt.Println("Impossible to open user.csv: ", err)
+		color.Red("Impossible to open user.csv: ", err)
 		return
 	}
 	defer writerCSV.Close()
@@ -103,11 +105,11 @@ func QuizzGame() {
 	// Inject the data to user.csv
 	err = writer.Write([]string{user.Pseudo, fmt.Sprint(user.Score)})
 	if err != nil {
-		fmt.Println("Error writting to csv: ", err)
+		color.Red("Error writting to csv: ", err)
 		return
 	}
 
-	fmt.Println("\nDonnées de l'utilisateur enregistrées dans user.csv.")
+	colors.Color("\nDonnées de l'utilisateur enregistrées dans user.csv.", "green")
 }
 
 // Function allow delete the accent in the word

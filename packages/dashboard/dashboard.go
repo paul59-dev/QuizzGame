@@ -4,9 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"paul/quizzGame/packages/colors"
 	"paul/quizzGame/packages/quizzgame"
 	"paul/quizzGame/packages/scoreboard"
 	"strconv"
+
+	"github.com/fatih/color"
 )
 
 func Dashboard() {
@@ -17,23 +20,24 @@ func Dashboard() {
 		"Voir les scores",
 	}
 
-	fmt.Println("Menu principal !")
+	fmt.Println()
+	colors.Color("Menu principal !\n", "yellow")
 	for index, value := range dashboard {
-		fmt.Printf("%d - %s\n", index+1, value)
+		fmt.Printf("   %d - %s\n", index+1, value)
 	}
 
 	for {
-		fmt.Print("Enter number: ")
+		colors.Color("Enter number: ", "blue")
 		if sc.Scan() {
 			userInput := sc.Text()
 			number, err := strconv.Atoi(userInput)
 			if err != nil {
-				fmt.Println("Error to convert variable to interger: ", err)
+				color.Red("Error to convert variable to interger: ", err)
 				return
 			}
 
 			if number < 0 || number > len(dashboard) {
-				fmt.Printf("Nombre invalide, veuillez entrer un nombre entre 0 et %d\n", len(dashboard))
+				color.Red("Nombre invalide, veuillez entrer un nombre entre 0 et %d\n", len(dashboard))
 				continue
 			}
 
@@ -43,10 +47,10 @@ func Dashboard() {
 			case 2:
 				scoreboard.Scoreboard()
 			default:
-				fmt.Println("Nombre invalide !")
+				color.Red("Nombre invalide !")
 			}
 		} else {
-			fmt.Println("Error for the read user input:", sc.Err())
+			color.Red("Error for the read user input:", sc.Err())
 			return
 		}
 
