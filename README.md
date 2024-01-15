@@ -28,8 +28,7 @@ Recover the `quizzGame.exe` in the repo, for the time being, they are .exe for W
 
 ## Coming soon
 
-- Add a dashboard for navigate between Game and Score
-- Add Scoreboard for view a score of the all players
+- Clear terminal an each question
 
 --- 
 
